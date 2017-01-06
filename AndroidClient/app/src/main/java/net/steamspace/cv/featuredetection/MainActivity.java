@@ -52,6 +52,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2, See
     public static final int SHOW_MATCHES = 9;
     public static final int SHOW_BOX = 10;
     public static final int SHOW_KEYPOINTS = 11;
+    public static final int MIN_MATCHES_KEYPOINTS = 120;
 
     private MenuItem             mItemPreviewRGBA;
     private MenuItem mItemShowMatches;
@@ -115,7 +116,6 @@ public class MainActivity extends Activity implements CvCameraViewListener2, See
     };
 
     public MainActivity() {
-
 //        Log.i(TAG, "Instantiated new " + this.getClass());
     }
 
@@ -219,18 +219,6 @@ public class MainActivity extends Activity implements CvCameraViewListener2, See
 
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
         Mat rgba = inputFrame.rgba();
-        Size sizeRgba = rgba.size();
-
-        Mat rgbaInnerWindow;
-
-        int rows = (int) sizeRgba.height;
-        int cols = (int) sizeRgba.width;
-
-        int left = cols / 8;
-        int top = rows / 8;
-
-        int width = cols * 3 / 4;
-        int height = rows * 3 / 4;
 
         switch (MainActivity._viewMode) {
             case MainActivity.VIEW_MODE_RGBA:
@@ -246,17 +234,6 @@ public class MainActivity extends Activity implements CvCameraViewListener2, See
                     Mat gray2 = inputFrame.gray();
                     List<DMatch> good_matches = findMatches(inputFrame);
                     if (good_matches == null) return gray2;
-//                    if (MainActivity._viewMode == MainActivity.SHOW_BOX)
-//                        return drawBox(gray2, _keypoints2, good_matches);
-                    if (MainActivity._viewMode == MainActivity.SHOW_MATCHES)
-                            Log.i(TAG, "Everything ok");
-//                        return drawMatches(gray2, _keypoints2, good_matches, (double) gray2.height(), (double) gray2.width());
-                    else {
-                        Mat outputImage = new Mat();
-                        Features2d.drawKeypoints(gray2, _keypoints2, outputImage);
-                        takeScreenShot(outputImage);
-                        return outputImage;
-                    }
                 }
                 catch (Exception e) {
                     _numMatches = "";
@@ -268,13 +245,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2, See
 
         return rgba;
     }
-    private void takeScreenShot(Mat image) {
-        if (_takePicture) {
-            _takePicture = false;
-            Utilities.saveImg(image);
-            showToast("Screen Shot saved to device.");
-        }
-    }
+
     private List<DMatch> findMatches(CvCameraViewFrame inputFrame) {
         Log.i(TAG, "Start match");
         Mat gray2 = inputFrame.gray();
@@ -288,80 +259,17 @@ public class MainActivity extends Activity implements CvCameraViewListener2, See
         _detector.detect(gray2, _keypoints2);
         descriptorExtractor.compute(gray2, _keypoints2, _descriptors2);
 
-        MenuItem knnCheckBox = _menu.findItem(R.id.KNN);
-        MenuItem crossCheckCheckBox = _menu.findItem(R.id.CrossCheck);
         List<DMatch> matches12_list;
-        boolean runRatioTest = _menu.findItem(R.id.Ratio).isChecked();
-        int nNearestNeighbors = runRatioTest ? 2 : 15;
-        if (knnCheckBox.isChecked()) {
-            List<MatOfDMatch> knnmatches12 = new ArrayList<>();
-            _matcher.knnMatch(_descriptors, _descriptors2, knnmatches12, nNearestNeighbors);
-            matches12_list = new ArrayList<>();
-            if (runRatioTest) {
-                for (MatOfDMatch mat : knnmatches12) {
-                    List<DMatch> tempList = mat.toList();
-                    if (tempList.get(0).distance < .75 * tempList.get(1).distance)
-                        matches12_list.add(tempList.get(0));
-                }
-            }
-            else {
-                for (MatOfDMatch mat : knnmatches12) {
-                    matches12_list.addAll(mat.toList());
-                }
-            }
-        }
-        else {
-            MatOfDMatch matches12 = new MatOfDMatch();
-            _matcher.match(_descriptors, _descriptors2, matches12);
-            matches12_list = matches12.toList();
-        }
+
+        MatOfDMatch matches12 = new MatOfDMatch();
+        _matcher.match(_descriptors, _descriptors2, matches12);
+        matches12_list = matches12.toList();
 
         List<DMatch> filtered_list;
-        if (crossCheckCheckBox.isChecked()) {
-            // Cross-check. (see http://answers.opencv.org/question/15/how-to-get-good-matches-from-the-orb-feature-detection-algorithm/)
-            filtered_list = new ArrayList<>();
-            List<DMatch> matches21_list;
-            if (knnCheckBox.isChecked()) {
-                List<MatOfDMatch> knnmatches21 = new ArrayList<>();
-                _matcher.knnMatch(_descriptors2, _descriptors, knnmatches21, nNearestNeighbors);
-                matches21_list = new ArrayList<>();
-//                for (MatOfDMatch mat : knnmatches21) {
-//                    matches21_list.addAll(mat.toList());
-//                }
-                if (runRatioTest) {
-                    for (MatOfDMatch mat : knnmatches21) {
-                        List<DMatch> tempList = mat.toList();
-                        if (tempList.get(0).distance < .75 * tempList.get(1).distance)
-                            matches21_list.add(tempList.get(0));
-                    }
-                }
-                else {
-                    for (MatOfDMatch mat : knnmatches21) {
-                        matches21_list.addAll(mat.toList());
-                    }
-                }
-            }
-            else {
-                MatOfDMatch matches21 = new MatOfDMatch();
-                _matcher.match( _descriptors2, _descriptors, matches21 );
-                matches21_list = matches21.toList();
-            }
-            for(int i = 0; i < matches12_list.size(); i++ )
-            {
-                DMatch forward = matches12_list.get(i);
-                if (forward.trainIdx > matches21_list.size() - 1) continue;
-                DMatch backward = matches21_list.get(forward.trainIdx);
-                if( backward.trainIdx == forward.queryIdx )
-                    filtered_list.add( forward );
-            }
-        }
-        else {
-            filtered_list = matches12_list;
-        }
+        filtered_list = matches12_list;
 
         double max_dist = 0;
         double min_dist = 100;
-
 
         //-- Quick calculation of max and min distances between keypoints
         for (int i = 0; i < filtered_list.size(); i++) {
@@ -388,112 +296,13 @@ public class MainActivity extends Activity implements CvCameraViewListener2, See
 
         return good_matches_list;
     }
-//    private Mat drawMatches(Mat gray2, MatOfKeyPoint _keypoints2, List<DMatch> matches_list, double rows, double cols) {
-//        Mat outputImg = new Mat();
-//
-//        MatOfDMatch  good_matches = new MatOfDMatch();
-//        for (DMatch match : matches_list) {
-//            MatOfDMatch temp = new MatOfDMatch();
-//            temp.fromArray(match);
-//            good_matches.push_back(temp);
-//        }
-//
-////        Features2d.drawMatches(_img1, _keypoints, gray2, _keypoints2, good_matches, outputImg);
-//        Log.i(TAG, "Saving");
-////        saveImg(outputImg);
-//        Log.i(TAG, "Saved");
-//        Mat resizedImg = new Mat();
-//        Imgproc.resize(outputImg, resizedImg, new Size(cols, rows));
-////        Imgproc.resize(outputImg, resizedImg, new Size(), cols/outputImg.width(), rows/outputImg.height(), Imgproc.INTER_NEAREST);
-//        takeScreenShot(resizedImg);
-//
-//        return resizedImg;
-//    }
-//    private Mat drawBox(Mat gray2, MatOfKeyPoint _keypoints2, List<DMatch> good_matches_list) {
-//        LinkedList<Point> objList = new LinkedList<>();
-//        LinkedList<Point> sceneList = new LinkedList<>();
-//        List<KeyPoint> _keypoints2_List = _keypoints2.toList();
-//        List<KeyPoint> keypoints_List = _keypoints.toList();
-//
-//        for (int i = 0; i < good_matches_list.size(); i++) {
-//            objList.addLast(keypoints_List.get(good_matches_list.get(i).queryIdx).pt);
-//            sceneList.addLast(_keypoints2_List.get(good_matches_list.get(i).trainIdx).pt);
-//        }
-//
-//        MatOfPoint2f obj = new MatOfPoint2f();
-//        obj.fromList(objList);
-//
-//        MatOfPoint2f scene = new MatOfPoint2f();
-//        scene.fromList(sceneList);
-//
-//        Mat hg = Calib3d.findHomography(obj, scene, Calib3d.RANSAC, _ransacThreshold);
-//
-//        Mat obj_corners = new Mat(4, 1, CvType.CV_32FC2);
-//        Mat scene_corners = new Mat(4, 1, CvType.CV_32FC2);
-//
-//        obj_corners.put(0, 0, new double[]{0, 0});
-//        obj_corners.put(1, 0, new double[]{_img1.cols(), 0});
-//        obj_corners.put(2, 0, new double[]{_img1.cols(), _img1.rows()});
-//        obj_corners.put(3, 0, new double[]{0, _img1.rows()});
-//        //obj_corners:input
-//
-//        Mat outputImage = new Mat();
-////        Features2d.drawKeypoints(gray2, _keypoints2, outputImage);
-//
-//        Core.perspectiveTransform(obj_corners, scene_corners, hg);
-//        int adj = 0;
-//        Imgproc.line(outputImage, adjustPoint(adj, scene_corners.get(0, 0)), adjustPoint(adj, scene_corners.get(1, 0)), new Scalar(0, 255, 0), 4);
-//        Imgproc.line(outputImage, adjustPoint(adj, scene_corners.get(1, 0)), adjustPoint(adj, scene_corners.get(2, 0)), new Scalar(0, 255, 0), 4);
-//        Imgproc.line(outputImage, adjustPoint(adj, scene_corners.get(2, 0)), adjustPoint(adj, scene_corners.get(3, 0)), new Scalar(0, 255, 0), 4);
-//        Imgproc.line(outputImage, adjustPoint(adj, scene_corners.get(3, 0)), adjustPoint(adj, scene_corners.get(0, 0)), new Scalar(0, 255, 0), 4);
-//
-//        Log.i(TAG, "Done matching");
-//        takeScreenShot(outputImage);
-//        return outputImage;
-//    }
-    private Mat trainFeatureDetector(/*CvCameraViewFrame inputFrame*/) {
-        /*ArrayList<String> imageList = Utilities.getListOfImages();
 
-        Mat imageFound = null;
-        boolean check = true;
-
-        while(check){
-            for (String imageName: imageList){
-                imageFound = Utilities.getImage("IMG_20170103_110826.jpg");
-
-                _descriptors = new Mat();
-                _keypoints = new MatOfKeyPoint();
-                _detector = FeatureDetector.create(_featureDetectorID);
-
-                //File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "FeatureDetectorApp");
-
-                descriptorExtractor = DescriptorExtractor.create(_descriptorExtractorID);
-
-                _matcher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE_HAMMINGLUT);
-//            _matcher = DescriptorMatcher.create(DescriptorMatcher.FLANNBASED);            // too slow
-
-                _detector.detect(imageFound, _keypoints, _descriptors);
-                descriptorExtractor.compute(imageFound, _keypoints, _descriptors);
-
-                _img1 = imageFound.clone();
-
-                Log.i(TAG, "currImageName: " + imageName);
-                Log.i(TAG, "currImageKeypoints: " + _keypoints.toList().size());
-                if(_keypoints.toList().size() > 150){
-                    check = false;
-                    break;
-                }
-            }
-        }
-
-        return imageFound;*/
-        String imageName = "IMG_20170103_110130.jpg";
+    private Mat trainFeatureDetector() {
+        String imageName = "IMG_20170103_110826.jpg";
         Mat gray1 = Utilities.getImage(imageName);//inputFrame.gray();
         _descriptors = new Mat();
         _keypoints = new MatOfKeyPoint();
         _detector = FeatureDetector.create(_featureDetectorID);
-
-        //File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "FeatureDetectorApp");
 
         descriptorExtractor = DescriptorExtractor.create(_descriptorExtractorID);
 
@@ -504,37 +313,12 @@ public class MainActivity extends Activity implements CvCameraViewListener2, See
 
         _img1 = gray1.clone();
 
-        //Mat outputImage = new Mat();
-        //Features2d.drawKeypoints(gray1, _keypoints, outputImage);
-        //Utilities.saveImg(outputImage);
-
         Log.i(TAG, "currImageName: " + imageName);
         Log.i(TAG, "currImageKeypoints: " + _keypoints.toList().size());
         showToast("Trained " +  _modelMenu.getTitle());
         return gray1;
     }
 
-    private void setImageDetector(String imageName)
-    {
-        ArrayList<String> imageList = Utilities.getListOfImages();
-
-        Mat image = Utilities.getImage(imageName);
-
-        _descriptors = new Mat();
-        _keypoints = new MatOfKeyPoint();
-
-        _detector = FeatureDetector.create(_featureDetectorID);
-        descriptorExtractor = DescriptorExtractor.create(_descriptorExtractorID);
-        _matcher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE_HAMMINGLUT);
-
-        _detector.detect(image, _keypoints, _descriptors);
-        descriptorExtractor.compute(image, _keypoints, _descriptors);
-    }
-
-    private Point adjustPoint(int adj, double[] pt) {
-        pt[0] += adj;
-        return new Point(pt);
-    }
     private void updateTextViews() {
         MainActivity.this.runOnUiThread(new Runnable() {
 
@@ -542,7 +326,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2, See
             public void run() {
                 Log.i(TAG, "hoi: " + _numMatches);
                 Log.i(TAG, "Total Matches keypoints: " + totalMatchesKeyPoints);
-                if(totalMatchesKeyPoints > 150){
+                if(totalMatchesKeyPoints > MIN_MATCHES_KEYPOINTS){
                     _numMatchesTextView.setText("SAMA Gambarnya");
                     textView.setText("Hello World");
                 }else {
