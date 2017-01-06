@@ -43,7 +43,7 @@ import android.widget.Toast;
 
 import net.steamspace.cv.featuredetection.R;
 
-public class MainActivity extends Activity implements CvCameraViewListener2, SeekBar.OnSeekBarChangeListener {
+public class MainActivity extends Activity implements CvCameraViewListener2{
     private static final String  TAG                 = "OCVSample::Activity";
     String _toastMsg = "";
 
@@ -132,15 +132,15 @@ public class MainActivity extends Activity implements CvCameraViewListener2, See
 
         mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.image_manipulations_activity_surface_view);
         mOpenCvCameraView.setCvCameraViewListener(this);
-        _seekBarRansac = (SeekBar) findViewById(R.id.ransacSeekBar);
-        _seekBarMinMax = (SeekBar) findViewById(R.id.maxMinSeekBar);
-        _ransacThresholdTextView = (TextView) findViewById(R.id.ransacThreshold);
-        _maxMinTextView = (TextView) findViewById(R.id.maxMinValue);
+//        _seekBarRansac = (SeekBar) findViewById(R.id.ransacSeekBar);
+//        _seekBarMinMax = (SeekBar) findViewById(R.id.maxMinSeekBar);
+//        _ransacThresholdTextView = (TextView) findViewById(R.id.ransacThreshold);
+//        _maxMinTextView = (TextView) findViewById(R.id.maxMinValue);
         _numMatchesTextView = (TextView) findViewById(R.id.numMatches);
-        _minDistanceTextView = (TextView) findViewById(R.id.minValue);
+//        _minDistanceTextView = (TextView) findViewById(R.id.minValue);
         textView = (TextView) findViewById(R.id.textView);
-        _seekBarRansac.setOnSeekBarChangeListener(this);
-        _seekBarMinMax.setOnSeekBarChangeListener(this);
+//        _seekBarRansac.setOnSeekBarChangeListener(this);
+//        _seekBarMinMax.setOnSeekBarChangeListener(this);
     }
 
     @Override
@@ -167,10 +167,10 @@ public class MainActivity extends Activity implements CvCameraViewListener2, See
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 //        Log.i(TAG, "called onCreateOptionsMenu");
-        mItemPreviewRGBA  = menu.add("Reset");
-        mItemShowKeypoints = menu.add("Show Key Points");
-        mItemShowMatches = menu.add("Show Matches");
-        mItemShowBox = menu.add("Show Box");
+//        mItemPreviewRGBA  = menu.add("Reset");
+//        mItemShowKeypoints = menu.add("Show Key Points");
+//        mItemShowMatches = menu.add("Show Matches");
+//        mItemShowBox = menu.add("Show Box");
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
@@ -180,34 +180,36 @@ public class MainActivity extends Activity implements CvCameraViewListener2, See
 //        Log.i(TAG, "called onOptionsItemSelected; selected item: " + item);
         if (item == mItemPreviewRGBA)
             _viewMode = VIEW_MODE_RGBA;
-        else if (item == mItemShowMatches)
-            _viewMode = SHOW_MATCHES;
-        else if (item == mItemShowBox)
-            _viewMode = SHOW_BOX;
-        else if (item == mItemShowKeypoints)
-            _viewMode = SHOW_KEYPOINTS;
+//        else if (item == mItemShowMatches)
+//            _viewMode = SHOW_MATCHES;
+//        else if (item == mItemShowBox)
+//            _viewMode = SHOW_BOX;
+//        else if (item == mItemShowKeypoints)
+//            _viewMode = SHOW_KEYPOINTS;
         else if (item.getItemId() == R.id.action_train)
             _viewMode = TRAIN;
-        else if (item.getItemId() == R.id.action_screen_shot)
-            _takePicture = true;
-        else if (item.getItemId() == R.id.ORB || item.getItemId() == R.id.BRISK || item.getItemId() == R.id.ORBFREAK
-//                || item.getItemId() == R.id.SIFT || item.getItemId() == R.id.SURF || item.getItemId() == R.id.SURFBRIEF
-                || item.getItemId() == R.id.STAR) {
-            int id = item.getItemId();
-            setModel(id);
-            item.setChecked(true);
-        }
-        else {
-            item.setChecked(!item.isChecked());
-            if (item.getItemId() == R.id.Ratio && item.isChecked()) {
-                _menu.findItem(R.id.KNN).setChecked(true);  // KNN must be checked if running ratio test.
-                showToast("Ratio Test requires KNN too, enabling KNN.");
-            }
-            if (item.getItemId() == R.id.KNN && _menu.findItem(R.id.Ratio).isChecked()) {
-                _menu.findItem(R.id.Ratio).setChecked(false);  // KNN must be checked if running ratio test.
-                showToast("Ratio Test requires KNN too, disabling Ratio test.");
-            }
-        }
+//        else if (item.getItemId() == R.id.action_screen_shot)
+//            _takePicture = true;
+        else
+            setModel();
+//        else if (item.getItemId() == R.id.ORB || item.getItemId() == R.id.BRISK || item.getItemId() == R.id.ORBFREAK
+////                || item.getItemId() == R.id.SIFT || item.getItemId() == R.id.SURF || item.getItemId() == R.id.SURFBRIEF
+//                || item.getItemId() == R.id.STAR) {
+//            int id = item.getItemId();
+//            setModel(id);
+//            item.setChecked(true);
+//        }
+//        else {
+//            item.setChecked(!item.isChecked());
+//            if (item.getItemId() == R.id.Ratio && item.isChecked()) {
+//                _menu.findItem(R.id.KNN).setChecked(true);  // KNN must be checked if running ratio test.
+//                showToast("Ratio Test requires KNN too, enabling KNN.");
+//            }
+//            if (item.getItemId() == R.id.KNN && _menu.findItem(R.id.Ratio).isChecked()) {
+//                _menu.findItem(R.id.Ratio).setChecked(false);  // KNN must be checked if running ratio test.
+//                showToast("Ratio Test requires KNN too, disabling Ratio test.");
+//            }
+//        }
         return true;
     }
 
@@ -315,7 +317,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2, See
 
         Log.i(TAG, "currImageName: " + imageName);
         Log.i(TAG, "currImageKeypoints: " + _keypoints.toList().size());
-        showToast("Trained " +  _modelMenu.getTitle());
+//        showToast("Trained " +  _modelMenu.getTitle());
         return gray1;
     }
 
@@ -333,26 +335,13 @@ public class MainActivity extends Activity implements CvCameraViewListener2, See
                     _numMatchesTextView.setText("GA SAMA!!!");
                     textView.setText(null);
                 }
-                _minDistanceTextView.setText(String.valueOf(_minDistance));
-                _ransacThresholdTextView.setText(String.valueOf(_ransacThreshold));
-                _maxMinTextView.setText(String.valueOf(_maxMin));
+//                _minDistanceTextView.setText(String.valueOf(_minDistance));
+//                _ransacThresholdTextView.setText(String.valueOf(_ransacThreshold));
+//                _maxMinTextView.setText(String.valueOf(_maxMin));
             }
         });
     }
-    //method for when the progress bar is changed
-    public void onProgressChanged(SeekBar seekBar, int progress,
-                                  boolean fromUser) {
-        if (seekBar.getId() == R.id.maxMinSeekBar)
-            _maxMin = progress;
-        else
-            _ransacThreshold = progress;
-    }
-    //method for when the progress bar is first touched
-    public void onStartTrackingTouch(SeekBar seekBar) {
-    }
-    //method for when the progress bar is released
-    public void onStopTrackingTouch(SeekBar seekBar) {
-    }
+
     private void showToast(String msg) {
         _toastMsg = msg;
         MainActivity.this.runOnUiThread(new Runnable() {
@@ -366,44 +355,19 @@ public class MainActivity extends Activity implements CvCameraViewListener2, See
     }
     public boolean onPrepareOptionsMenu(Menu menu) {
 //        _modeMenuItem = menu.findItem(R.id.action_settings);
+//        Log.i(TAG, "ORB ID: " + R.id.ORB);
         _menu = menu;
-        _modelMenu = menu.findItem(R.id.model_selection);
-        MenuItem item = menu.findItem(R.id.ORB);
-        item.setChecked(true);
+//        _modelMenu = menu.findItem(R.id.model_selection);
+        MenuItem item = menu.findItem(0);
+//        item.setChecked(true);
         return super.onPrepareOptionsMenu(menu);
     }
-    private void setModel(int id) {
-        if (id == R.id.ORB) {
-            _featureDetectorID = FeatureDetector.ORB;
-            _descriptorExtractorID = DescriptorExtractor.ORB;
-            _modelMenu.setTitle("Model: ORB");
-            _detector = null;   // force user to retrain.
-            _viewMode = VIEW_MODE_RGBA;
-            showToast("Model updated, please press 'Train'.");
-        }
-        if (id == R.id.BRISK) {
-            _featureDetectorID = FeatureDetector.BRISK;
-            _descriptorExtractorID = DescriptorExtractor.BRISK;
-            _modelMenu.setTitle("Model: BRISK");
-            _detector = null;   // force user to retrain.
-            _viewMode = VIEW_MODE_RGBA;
-            showToast("Model updated, please press 'Train'.");
-        }
-        if (id == R.id.ORBFREAK) {
-            _featureDetectorID = FeatureDetector.ORB;
-            _descriptorExtractorID = DescriptorExtractor.FREAK;
-            _modelMenu.setTitle("Model: ORB/FREAK");
-            _detector = null;   // force user to retrain.
-            _viewMode = VIEW_MODE_RGBA;
-            showToast("Model updated, please press 'Train'.");
-        }
-        if (id == R.id.STAR) {
-            _featureDetectorID = FeatureDetector.STAR;
-            _descriptorExtractorID = DescriptorExtractor.BRIEF;
-            _modelMenu.setTitle("Model: STAR/BRIEF");
-            _detector = null;   // force user to retrain.
-            _viewMode = VIEW_MODE_RGBA;
-            showToast("Model updated, please press 'Train'.");
-        }
+    private void setModel() {
+        _featureDetectorID = FeatureDetector.ORB;
+        _descriptorExtractorID = DescriptorExtractor.ORB;
+//        _modelMenu.setTitle("Model: ORB");
+        _detector = null;   // force user to retrain.
+        _viewMode = VIEW_MODE_RGBA;
+        showToast("Model updated, please press 'Train'.");
     }
 }
