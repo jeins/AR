@@ -11,10 +11,17 @@ let express = require('express'),
 let imageApiPrefix = '/api/image/';
 let imgPath = __dirname + '/../public/images/';
 
+/**
+ * get api version
+ */
 router.get('/api/version', (req, res)=>{
     res.json({version: '1.0.0'});
 });
 
+/**
+ * get image from name and file extension
+ * exp request: /api/image/41758/png
+ */
 router.get(imageApiPrefix + ':name/:extension', (req, res)=>{
     let imgExtension = req.params.extension;
     let imgName = req.params.name + '.' + imgExtension;
@@ -27,6 +34,10 @@ router.get(imageApiPrefix + ':name/:extension', (req, res)=>{
     })
 });
 
+/**
+ * get image list by lat & lon
+ *  exp requestBody: {"location":{"latitude": 52.456925, "longitude": 13.526658}}
+ */
 router.post(imageApiPrefix + 'list', (req, res)=>{
     let filter = {
         latitude: req.body.location.latitude,
@@ -34,7 +45,8 @@ router.post(imageApiPrefix + 'list', (req, res)=>{
     };
 
     models.images
-        .findAll({
+        .findOne({
+            order: 'createdAt DESC',
             where: filter
         })
         .then((images)=>{
@@ -42,6 +54,12 @@ router.post(imageApiPrefix + 'list', (req, res)=>{
         })
 });
 
+/**
+ * add image with image information
+ * imgData must to base64 encrypted
+ * imgData contains location & message
+ * exp imgData: {"location":{"latitude": 52.456925, "longitude": 13.526658}, "message": "hello world"}
+ */
 router.post(imageApiPrefix + ':imgdata', (req, res)=>{
     let imgData = JSON.parse(Buffer.from(''+req.params.imgdata, 'base64'));
     let location = imgData.location;
@@ -51,7 +69,8 @@ router.post(imageApiPrefix + ':imgdata', (req, res)=>{
     let generateImgName = (str)=>{
         let tmp = str.split('.');
         imgExtension = tmp[tmp.length-1];
-        str = message + JSON.stringify(location);
+        //str = message + JSON.stringify(location);
+        str = JSON.stringify(location); //encrypt name with location
 
         let x = (str.charCodeAt(0) * 719) % 1138;
         let hash = 837;
