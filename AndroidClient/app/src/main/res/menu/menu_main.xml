@@ -8,7 +8,7 @@
         <!--android:showAsAction="always" />-->
 
     <item android:id="@+id/action_train"
-        android:title="Train"
+        android:title="Scanning"
         android:showAsAction="always" />
 
     <!--<item android:id="@+id/model_selection"-->

@@ -11,7 +11,7 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="net.steamspace.cv.featuredetection.MainActivity"
-            android:label="Feature Detector App"
+            android:label="Text Detector"
             android:screenOrientation="landscape"
             >
             <intent-filter>

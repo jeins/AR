@@ -1,6 +1,5 @@
 package net.steamspace.cv.featuredetection;
 
-import android.os.AsyncTask;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -10,8 +9,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -40,24 +37,6 @@ public class RestClient {
         Request request = new Request.Builder()
                 .url(url + "version")
                 .build();
-
-//        client.newCall(request).enqueue(new Callback() {
-//            @Override
-//            public void onFailure(Call call, IOException e) {
-//                e.printStackTrace();
-//            }
-//
-//            @Override
-//            public void onResponse(Call call, Response response) throws IOException {
-//                if (!response.isSuccessful()) {
-//                    throw new IOException("Unexpected code " + response);
-//                } else {
-//                    String res = response.body().string();
-//                    Log.i(TAG, "Result: " + res);
-//                    result = res;
-//                }
-//            }
-//        });
         try{
 
             Response response = client.newCall(request).execute();
@@ -71,6 +50,7 @@ public class RestClient {
     {
         OkHttpClient client = new OkHttpClient();
         HashMap<String, String> map = new HashMap<String, String>();
+//        ImageTask imageTask = new ImageTask();
 
         try{
             JSONObject latLonObj = new JSONObject();
@@ -99,6 +79,8 @@ public class RestClient {
 
                 Log.i(TAG, "HASILL: " + key + " " + responseObj.getString(key));
             }
+
+//            imageTask.execute(map.get("name"), map.get("extension"));
 
             return map;
 

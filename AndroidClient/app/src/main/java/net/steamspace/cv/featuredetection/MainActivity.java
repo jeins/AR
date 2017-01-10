@@ -2,6 +2,7 @@ package net.steamspace.cv.featuredetection;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -30,6 +31,7 @@ import org.opencv.features2d.Features2d;
 import org.opencv.imgproc.Imgproc;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -97,6 +99,12 @@ public class MainActivity extends Activity implements CvCameraViewListener2{
 
     int totalMatchesKeyPoints = 0;
 
+    RestClient restClient;
+//    ImageTask imageTask;
+    HashMap<String, String> locationData;
+
+    String imageName;
+
     private BaseLoaderCallback  mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
@@ -117,14 +125,21 @@ public class MainActivity extends Activity implements CvCameraViewListener2{
 
     public MainActivity() {
 //        Log.i(TAG, "Instantiated new " + this.getClass());
+        restClient = new RestClient();
+//        imageTask = new ImageTask();
+    }
+
+    private void setImageName(String imageName)
+    {
+        this.imageName = imageName;
     }
 
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
 //        Log.i(TAG, "called onCreate");
+
         super.onCreate(savedInstanceState);
-//        requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -132,17 +147,23 @@ public class MainActivity extends Activity implements CvCameraViewListener2{
 
         mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.image_manipulations_activity_surface_view);
         mOpenCvCameraView.setCvCameraViewListener(this);
-//        _seekBarRansac = (SeekBar) findViewById(R.id.ransacSeekBar);
-//        _seekBarMinMax = (SeekBar) findViewById(R.id.maxMinSeekBar);
-//        _ransacThresholdTextView = (TextView) findViewById(R.id.ransacThreshold);
-//        _maxMinTextView = (TextView) findViewById(R.id.maxMinValue);
         _numMatchesTextView = (TextView) findViewById(R.id.numMatches);
-//        _minDistanceTextView = (TextView) findViewById(R.id.minValue);
         textView = (TextView) findViewById(R.id.textView);
-        ImageTask imgTask = new ImageTask();
-        imgTask.execute("Hellow");
-//        _seekBarRansac.setOnSeekBarChangeListener(this);
-//        _seekBarMinMax.setOnSeekBarChangeListener(this);
+
+        new AsyncTask<Void, Void, String>(){
+
+            @Override
+            protected String doInBackground(Void... params) {
+                locationData = restClient.getLocationData(52.456925, 13.526658); //TODO: SHOULD BE DYNAMIC!
+                imageName = locationData.get("name") + '.' + locationData.get("extension");
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(String params) {
+                new ImageTask().execute(locationData.get("name"), locationData.get("extension"));
+            }
+        }.execute();
     }
 
     @Override
@@ -168,11 +189,6 @@ public class MainActivity extends Activity implements CvCameraViewListener2{
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-//        Log.i(TAG, "called onCreateOptionsMenu");
-//        mItemPreviewRGBA  = menu.add("Reset");
-//        mItemShowKeypoints = menu.add("Show Key Points");
-//        mItemShowMatches = menu.add("Show Matches");
-//        mItemShowBox = menu.add("Show Box");
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
@@ -182,36 +198,11 @@ public class MainActivity extends Activity implements CvCameraViewListener2{
 //        Log.i(TAG, "called onOptionsItemSelected; selected item: " + item);
         if (item == mItemPreviewRGBA)
             _viewMode = VIEW_MODE_RGBA;
-//        else if (item == mItemShowMatches)
-//            _viewMode = SHOW_MATCHES;
-//        else if (item == mItemShowBox)
-//            _viewMode = SHOW_BOX;
-//        else if (item == mItemShowKeypoints)
-//            _viewMode = SHOW_KEYPOINTS;
         else if (item.getItemId() == R.id.action_train)
             _viewMode = TRAIN;
-//        else if (item.getItemId() == R.id.action_screen_shot)
-//            _takePicture = true;
         else
             setModel();
-//        else if (item.getItemId() == R.id.ORB || item.getItemId() == R.id.BRISK || item.getItemId() == R.id.ORBFREAK
-////                || item.getItemId() == R.id.SIFT || item.getItemId() == R.id.SURF || item.getItemId() == R.id.SURFBRIEF
-//                || item.getItemId() == R.id.STAR) {
-//            int id = item.getItemId();
-//            setModel(id);
-//            item.setChecked(true);
-//        }
-//        else {
-//            item.setChecked(!item.isChecked());
-//            if (item.getItemId() == R.id.Ratio && item.isChecked()) {
-//                _menu.findItem(R.id.KNN).setChecked(true);  // KNN must be checked if running ratio test.
-//                showToast("Ratio Test requires KNN too, enabling KNN.");
-//            }
-//            if (item.getItemId() == R.id.KNN && _menu.findItem(R.id.Ratio).isChecked()) {
-//                _menu.findItem(R.id.Ratio).setChecked(false);  // KNN must be checked if running ratio test.
-//                showToast("Ratio Test requires KNN too, disabling Ratio test.");
-//            }
-//        }
+
         return true;
     }
 
@@ -302,7 +293,6 @@ public class MainActivity extends Activity implements CvCameraViewListener2{
     }
 
     private Mat trainFeatureDetector() {
-        String imageName = "IMG_20170103_110826.jpg";
         Mat gray1 = Utilities.getImage(imageName);//inputFrame.gray();
         _descriptors = new Mat();
         _keypoints = new MatOfKeyPoint();
@@ -328,18 +318,15 @@ public class MainActivity extends Activity implements CvCameraViewListener2{
 
             @Override
             public void run() {
-                Log.i(TAG, "hoi: " + _numMatches);
-                Log.i(TAG, "Total Matches keypoints: " + totalMatchesKeyPoints);
-                if(totalMatchesKeyPoints > MIN_MATCHES_KEYPOINTS){
-                    _numMatchesTextView.setText("SAMA Gambarnya");
-                    textView.setText("Hello World");
-                }else {
-                    _numMatchesTextView.setText("GA SAMA!!!");
-                    textView.setText(null);
-                }
-//                _minDistanceTextView.setText(String.valueOf(_minDistance));
-//                _ransacThresholdTextView.setText(String.valueOf(_ransacThreshold));
-//                _maxMinTextView.setText(String.valueOf(_maxMin));
+            Log.i(TAG, "hoi: " + _numMatches);
+            Log.i(TAG, "Total Matches keypoints: " + totalMatchesKeyPoints);
+            if(totalMatchesKeyPoints > MIN_MATCHES_KEYPOINTS){
+                _numMatchesTextView.setText(locationData.get("message"));
+                textView.setText(locationData.get("message"));
+            }else {
+                _numMatchesTextView.setText("GA SAMA!!!");
+                textView.setText(null);
+            }
             }
         });
     }
@@ -356,11 +343,9 @@ public class MainActivity extends Activity implements CvCameraViewListener2{
         });
     }
     public boolean onPrepareOptionsMenu(Menu menu) {
-//        _modeMenuItem = menu.findItem(R.id.action_settings);
-//        Log.i(TAG, "ORB ID: " + R.id.ORB);
         _menu = menu;
-//        _modelMenu = menu.findItem(R.id.model_selection);
         MenuItem item = menu.findItem(0);
+
 //        item.setChecked(true);
         return super.onPrepareOptionsMenu(menu);
     }

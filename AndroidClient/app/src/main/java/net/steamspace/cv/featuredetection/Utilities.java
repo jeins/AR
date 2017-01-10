@@ -68,11 +68,6 @@ public class Utilities {
         File mediaStorageDir = getStorageDirectory();
         Mat imgMat = null;
 
-        RestClient restClient = new RestClient();
-        restClient.getVersion();
-        restClient.getLocationData(52.456925, 13.526658);
-        Log.i(TAG, "HASILJG: " + restClient.getResult());
-
         try{
             Bitmap bmp = BitmapFactory.decodeFile(mediaStorageDir.getPath() + File.separator + imageName);
             imgMat = new Mat();

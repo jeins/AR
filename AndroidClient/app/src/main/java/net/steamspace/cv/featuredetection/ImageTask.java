@@ -24,9 +24,9 @@ public class ImageTask extends AsyncTask<String, Void, byte[]>{
 
     @Override
     protected byte[] doInBackground(String... params) {
-        imageFile = "-53563.jpg";
-        String apiUri = "http://ar.mjuan.me/api/image/-53563/jpg";
-        Log.d(TAG, "ImageTaskParam: " + params[0]);
+        imageFile = params[0] + '.' + params[1];
+        String apiUri = "http://ar.mjuan.me/api/image/"+params[0]+"/"+params[1];
+        Log.d(TAG, "ImageTaskParam: " + imageFile);
         try{
             Request request = new Request.Builder()
                     .url(apiUri)
