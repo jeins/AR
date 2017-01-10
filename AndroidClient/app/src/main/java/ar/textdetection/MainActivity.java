@@ -25,7 +25,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
-import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,19 +42,10 @@ public class MainActivity extends Activity implements CvCameraViewListener2{
     public static final int MIN_MATCHES_KEYPOINTS = 120;
 
     private MenuItem             mItemPreviewRGBA;
-    private MenuItem mItemShowMatches;
-    private MenuItem             mItemShowBox;
-    private MenuItem             mItemShowKeypoints;
     private CameraBridgeViewBase mOpenCvCameraView;
 
     public static int _viewMode = VIEW_MODE_RGBA;
 
-    SeekBar _seekBarRansac;
-    SeekBar _seekBarMinMax;
-    TextView _minDistanceTextView;
-    TextView _numMatchesTextView;
-    TextView _ransacThresholdTextView;
-    TextView _maxMinTextView;
     TextView textView;
 
     DescriptorExtractor descriptorExtractor;
@@ -68,25 +58,19 @@ public class MainActivity extends Activity implements CvCameraViewListener2{
     Mat _descriptors2;
     MatOfKeyPoint _keypoints2;
 
-    int _lastViewMode = VIEW_MODE_RGBA;
-    boolean _takePicture = false;
-
     // GUI Controls
     Mat _img1;
     String _numMatches;
     int _minDistance;
-    int _ransacThreshold = 3;
     int _maxMin = 50;
 
     Menu _menu;
-    MenuItem _modelMenu;
     int _featureDetectorID = FeatureDetector.ORB;
     int _descriptorExtractorID = DescriptorExtractor.ORB;
 
     int totalMatchesKeyPoints = 0;
 
     RestClient restClient;
-//    ImageTask imageTask;
     HashMap<String, String> locationData;
 
     String imageName;
@@ -98,7 +82,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2{
                 case LoaderCallbackInterface.SUCCESS:
                 {
                     System.loadLibrary("nonfree");
-//                    Log.i(TAG, "OpenCV loaded successfully");
+                    Log.i(TAG, "OpenCV loaded successfully");
                     mOpenCvCameraView.enableView();
                 } break;
                 default:
@@ -112,12 +96,6 @@ public class MainActivity extends Activity implements CvCameraViewListener2{
     public MainActivity() {
 //        Log.i(TAG, "Instantiated new " + this.getClass());
         restClient = new RestClient();
-//        imageTask = new ImageTask();
-    }
-
-    private void setImageName(String imageName)
-    {
-        this.imageName = imageName;
     }
 
     /** Called when the activity is first created. */
@@ -133,7 +111,6 @@ public class MainActivity extends Activity implements CvCameraViewListener2{
 
         mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.image_manipulations_activity_surface_view);
         mOpenCvCameraView.setCvCameraViewListener(this);
-//        _numMatchesTextView = (TextView) findViewById(R.id.numMatches);
         textView = (TextView) findViewById(R.id.textView);
 
         new AsyncTask<Void, Void, String>(){
@@ -181,7 +158,6 @@ public class MainActivity extends Activity implements CvCameraViewListener2{
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-//        Log.i(TAG, "called onOptionsItemSelected; selected item: " + item);
         if (item == mItemPreviewRGBA)
             _viewMode = VIEW_MODE_RGBA;
         else if (item.getItemId() == R.id.action_train)
@@ -219,7 +195,6 @@ public class MainActivity extends Activity implements CvCameraViewListener2{
                 catch (Exception e) {
                     _numMatches = "";
                     _minDistance = -1;
-//                    Log.e(TAG, e.getMessage());
                     return rgba;
                 }
         }
@@ -233,7 +208,6 @@ public class MainActivity extends Activity implements CvCameraViewListener2{
         _descriptors2 = new Mat();
         _keypoints2 = new MatOfKeyPoint();
         if (_detector == null) {
-            showToast("Detector is null. You must re-train.");
             return null;
         }
 
@@ -314,17 +288,6 @@ public class MainActivity extends Activity implements CvCameraViewListener2{
         });
     }
 
-    private void showToast(String msg) {
-        _toastMsg = msg;
-        MainActivity.this.runOnUiThread(new Runnable() {
-
-            @Override
-            public void run() {
-                Toast.makeText(MainActivity.this, _toastMsg, Toast.LENGTH_SHORT).show();
-
-            }
-        });
-    }
     public boolean onPrepareOptionsMenu(Menu menu) {
         _menu = menu;
         MenuItem item = menu.findItem(0);
@@ -335,9 +298,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2{
     private void setModel() {
         _featureDetectorID = FeatureDetector.ORB;
         _descriptorExtractorID = DescriptorExtractor.ORB;
-//        _modelMenu.setTitle("Model: ORB");
         _detector = null;   // force user to retrain.
         _viewMode = VIEW_MODE_RGBA;
-        showToast("Model updated, please press 'Train'.");
     }
 }
