@@ -147,7 +147,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2{
 
         mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.image_manipulations_activity_surface_view);
         mOpenCvCameraView.setCvCameraViewListener(this);
-        _numMatchesTextView = (TextView) findViewById(R.id.numMatches);
+//        _numMatchesTextView = (TextView) findViewById(R.id.numMatches);
         textView = (TextView) findViewById(R.id.textView);
 
         new AsyncTask<Void, Void, String>(){
@@ -309,7 +309,6 @@ public class MainActivity extends Activity implements CvCameraViewListener2{
 
         Log.i(TAG, "currImageName: " + imageName);
         Log.i(TAG, "currImageKeypoints: " + _keypoints.toList().size());
-//        showToast("Trained " +  _modelMenu.getTitle());
         return gray1;
     }
 
@@ -321,10 +320,8 @@ public class MainActivity extends Activity implements CvCameraViewListener2{
             Log.i(TAG, "hoi: " + _numMatches);
             Log.i(TAG, "Total Matches keypoints: " + totalMatchesKeyPoints);
             if(totalMatchesKeyPoints > MIN_MATCHES_KEYPOINTS){
-                _numMatchesTextView.setText(locationData.get("message"));
                 textView.setText(locationData.get("message"));
             }else {
-                _numMatchesTextView.setText("GA SAMA!!!");
                 textView.setText(null);
             }
             }
