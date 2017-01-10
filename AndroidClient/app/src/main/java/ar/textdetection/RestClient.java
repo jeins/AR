@@ -1,4 +1,4 @@
-package net.steamspace.cv.featuredetection;
+package ar.textdetection;
 
 import android.util.Log;
 
@@ -20,7 +20,7 @@ import okhttp3.Response;
  */
 
 public class RestClient {
-    private static final String  TAG = "ORBDetector::REST_CLIENT";
+    private static final String  TAG = "TextDetection::REST_CLIENT";
     private String url;
     public String result = "";
     public static final MediaType JSON

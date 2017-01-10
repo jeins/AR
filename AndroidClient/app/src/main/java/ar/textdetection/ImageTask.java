@@ -1,4 +1,4 @@
-package net.steamspace.cv.featuredetection;
+package ar.textdetection;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -20,7 +20,7 @@ import okhttp3.Response;
 public class ImageTask extends AsyncTask<String, Void, byte[]>{
     OkHttpClient client = new OkHttpClient();
     String imageFile = "";
-    private static final String  TAG                 = "ORBDetector::ImageTask";
+    private static final String  TAG                 = "TextDetection::ImageTask";
 
     @Override
     protected byte[] doInBackground(String... params) {

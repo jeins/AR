@@ -1,4 +1,4 @@
-package net.steamspace.cv.featuredetection;
+package ar.textdetection;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Utilities {
-    private static final String  TAG                 = "ORBDetector::Utilities";
+    private static final String  TAG                 = "TextDetection::Utilities";
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final int MEDIA_TYPE_VIDEO = 2;
 
@@ -116,14 +116,14 @@ public class Utilities {
         // using Environment.getExternalStorageState() before doing this.
 
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), "FeatureDetectionApp");
+                Environment.DIRECTORY_PICTURES), "TextDetectionApp");
         // This location works best if you want the created images to be shared
         // between applications and persist after your app has been uninstalled.
 
         // Create the storage directory if it does not exist
         if (! mediaStorageDir.exists()){
             if (! mediaStorageDir.mkdirs()){
-                Log.d("FeatureDetectionApp", "failed to create directory");
+                Log.d("TextDetectionApp", "failed to create directory");
                 return null;
             }
         }

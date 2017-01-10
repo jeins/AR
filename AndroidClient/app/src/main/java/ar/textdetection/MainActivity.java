@@ -1,52 +1,38 @@
-package net.steamspace.cv.featuredetection;
+package ar.textdetection;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
-import org.opencv.calib3d.Calib3d;
-import org.opencv.core.Core;
-import org.opencv.core.CvType;
 import org.opencv.core.DMatch;
-import org.opencv.core.KeyPoint;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfDMatch;
 import org.opencv.core.MatOfKeyPoint;
-import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.Point;
-import org.opencv.core.Scalar;
-import org.opencv.core.Size;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.features2d.DescriptorExtractor;
 import org.opencv.features2d.DescriptorMatcher;
 import org.opencv.features2d.FeatureDetector;
-import org.opencv.features2d.Features2d;
-import org.opencv.imgproc.Imgproc;
 
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import net.steamspace.cv.featuredetection.R;
+import ar.textdetection.R;
 
 public class MainActivity extends Activity implements CvCameraViewListener2{
-    private static final String  TAG                 = "OCVSample::Activity";
+    private static final String  TAG                 = "TextDetection::Activity";
     String _toastMsg = "";
 
     public static final int      VIEW_MODE_RGBA      = 0;
