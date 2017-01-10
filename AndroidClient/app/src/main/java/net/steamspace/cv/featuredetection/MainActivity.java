@@ -139,6 +139,8 @@ public class MainActivity extends Activity implements CvCameraViewListener2{
         _numMatchesTextView = (TextView) findViewById(R.id.numMatches);
 //        _minDistanceTextView = (TextView) findViewById(R.id.minValue);
         textView = (TextView) findViewById(R.id.textView);
+        ImageTask imgTask = new ImageTask();
+        imgTask.execute("Hellow");
 //        _seekBarRansac.setOnSeekBarChangeListener(this);
 //        _seekBarMinMax.setOnSeekBarChangeListener(this);
     }
