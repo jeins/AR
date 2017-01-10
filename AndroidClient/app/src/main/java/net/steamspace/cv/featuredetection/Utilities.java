@@ -41,6 +41,7 @@ public class Utilities {
             return "";
         }
     }
+
     public static void saveImg(Mat outputImage) {
         File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
         if (pictureFile == null){
@@ -66,6 +67,11 @@ public class Utilities {
     public static Mat getImage(String imageName){
         File mediaStorageDir = getStorageDirectory();
         Mat imgMat = null;
+
+        RestClient restClient = new RestClient();
+        restClient.getVersion();
+        restClient.getLocationData(52.456925, 13.526658);
+        Log.i(TAG, "HASILJG: " + restClient.getResult());
 
         try{
             Bitmap bmp = BitmapFactory.decodeFile(mediaStorageDir.getPath() + File.separator + imageName);

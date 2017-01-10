@@ -25,9 +25,8 @@ android {
     }
 }
 
-
-
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile(name: 'app-debug', ext: 'aar')
+    compile 'com.squareup.okhttp3:okhttp:3.5.0'
 }
