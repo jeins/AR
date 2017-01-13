@@ -42,11 +42,11 @@ public class Utilities {
         }
     }
 
-    public static void saveImg(Mat outputImage) {
+    public static File saveImg(Mat outputImage) {
         File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
         if (pictureFile == null){
             Log.e(TAG, "Error creating media file, check storage permissions: ");
-            return;
+            return null;
         }
         try {
             FileOutputStream fos = new FileOutputStream(pictureFile);
@@ -57,11 +57,13 @@ public class Utilities {
             fos.flush();
             fos.close();
             Log.d(TAG, "Saved image as: " + pictureFile.getName());
+            return pictureFile;
         } catch (FileNotFoundException e) {
             Log.d(TAG, "File not found: " + e.getMessage());
         } catch (IOException e) {
             Log.d(TAG, "Error accessing file: " + e.getMessage());
         }
+        return null;
     }
 
     public static Mat getImage(String imageName){
