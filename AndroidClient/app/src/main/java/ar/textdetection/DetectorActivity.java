@@ -19,6 +19,7 @@ import org.opencv.features2d.DescriptorMatcher;
 import org.opencv.features2d.FeatureDetector;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,16 +27,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import ar.textdetection.R;
-
-public class MainActivity extends Activity implements CvCameraViewListener2{
+public class DetectorActivity extends Activity implements CvCameraViewListener2{
     private static final String  TAG                 = "TextDetection::Activity";
     String _toastMsg = "";
 
     public static final int      VIEW_MODE_RGBA      = 0;
-    public static final int TRAIN = 8;
+    public static final int SCANNING = 8;
     public static final int SHOW_MATCHES = 9;
     public static final int SHOW_BOX = 10;
     public static final int SHOW_KEYPOINTS = 11;
@@ -93,7 +91,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2{
         }
     };
 
-    public MainActivity() {
+    public DetectorActivity() {
 //        Log.i(TAG, "Instantiated new " + this.getClass());
         restClient = new RestClient();
     }
@@ -107,7 +105,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2{
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_detector);
 
         mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.image_manipulations_activity_surface_view);
         mOpenCvCameraView.setCvCameraViewListener(this);
@@ -152,7 +150,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2{
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.detector_menu, menu);
         return true;
     }
 
@@ -160,8 +158,13 @@ public class MainActivity extends Activity implements CvCameraViewListener2{
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item == mItemPreviewRGBA)
             _viewMode = VIEW_MODE_RGBA;
-        else if (item.getItemId() == R.id.action_train)
-            _viewMode = TRAIN;
+        else if (item.getItemId() == R.id.action_scanning)
+            _viewMode = SCANNING;
+        else if (item.getItemId() == R.id.action_map){
+            Intent intent = new Intent(getApplicationContext(), MapActivity.class);
+            startActivity(intent);
+        }
+
         else
             setModel();
 
@@ -177,16 +180,16 @@ public class MainActivity extends Activity implements CvCameraViewListener2{
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
         Mat rgba = inputFrame.rgba();
 
-        switch (MainActivity._viewMode) {
-            case MainActivity.VIEW_MODE_RGBA:
+        switch (DetectorActivity._viewMode) {
+            case DetectorActivity.VIEW_MODE_RGBA:
                 break;
 
-            case MainActivity.TRAIN:
+            case DetectorActivity.SCANNING:
                 _viewMode = SHOW_MATCHES;
                 return trainFeatureDetector();
-            case MainActivity.SHOW_MATCHES:
-            case MainActivity.SHOW_BOX:
-            case MainActivity.SHOW_KEYPOINTS:
+            case DetectorActivity.SHOW_MATCHES:
+            case DetectorActivity.SHOW_BOX:
+            case DetectorActivity.SHOW_KEYPOINTS:
                 try {
                     Mat gray2 = inputFrame.gray();
                     List<DMatch> good_matches = findMatches(inputFrame);
@@ -273,7 +276,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2{
     }
 
     private void updateTextViews() {
-        MainActivity.this.runOnUiThread(new Runnable() {
+        DetectorActivity.this.runOnUiThread(new Runnable() {
 
             @Override
             public void run() {
