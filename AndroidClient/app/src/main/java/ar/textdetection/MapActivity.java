@@ -2,6 +2,7 @@ package ar.textdetection;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -19,7 +20,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
  * Created by MJA on 12.01.2017.
  */
 
-public class MapActivity extends Activity implements OnMapReadyCallback {
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
     private static final String TAG = "TextDetection::MapActivity";
 
     GoogleMap googleMap;
@@ -73,7 +74,9 @@ public class MapActivity extends Activity implements OnMapReadyCallback {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.map_action_train){
-            Log.i(TAG, "GOTO TRAIN Image");
+            startActivity(new Intent(getApplicationContext(), TrainActivity.class));
+        } else if(item.getItemId() == R.id.map_action_scanning){
+            startActivity(new Intent(getApplicationContext(), DetectorActivity.class));
         }
 
         return true;
