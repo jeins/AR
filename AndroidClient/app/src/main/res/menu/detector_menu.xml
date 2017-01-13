@@ -4,7 +4,7 @@
     tools:context="ar.textdetection.DetectorActivity">
 
     <item android:id="@+id/action_scanning"
-        android:title="Scanning"
+        android:title="Start Scanning"
         android:showAsAction="always" />
 
     <item android:id="@+id/action_map"
