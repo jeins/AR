@@ -7,6 +7,10 @@
         android:title="Take Picture"
         android:showAsAction="always" />
 
+    <item android:id="@+id/map_action_traindata"
+        android:title="Set Data"
+        android:showAsAction="always" />
+
     <item android:id="@+id/map_action_scanning"
         android:title="Scanning"
         android:showAsAction="always" />
