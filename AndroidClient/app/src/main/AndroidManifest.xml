@@ -38,7 +38,20 @@
         <activity
             android:name=".DetectorActivity"
             android:label="Scanning Image"
-            android:screenOrientation="landscape">
+            android:screenOrientation="landscape"
+            android:parentActivityName=".MapActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MapActivity" />
+        </activity>
+        <activity
+            android:name=".TrainDataActivity"
+            android:label="Train Data Image"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".MapActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MapActivity" />
         </activity>
         <activity
             android:name=".TrainActivity"

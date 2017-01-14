@@ -77,6 +77,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             startActivity(new Intent(getApplicationContext(), TrainActivity.class));
         } else if(item.getItemId() == R.id.map_action_scanning){
             startActivity(new Intent(getApplicationContext(), DetectorActivity.class));
+        } else if(item.getItemId() == R.id.map_action_traindata){
+            startActivity(new Intent(getApplicationContext(), TrainDataActivity.class));
         }
 
         return true;
