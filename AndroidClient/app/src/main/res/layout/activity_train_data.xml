@@ -14,8 +14,8 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Latitude"
-            android:text="123"
+            android:hint="@string/latitude"
+            android:id="@+id/txt_latitude"
             android:clickable="false"
             android:cursorVisible="false"
             android:focusable="false"
@@ -31,8 +31,12 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Longitude"
-            android:inputType="number"/>
+            android:hint="@string/longitude"
+            android:id="@+id/txt_longitude"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"/>
 
     </android.support.design.widget.TextInputLayout>
 
@@ -44,7 +48,8 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Message"
+            android:hint="@string/message"
+            android:id="@+id/txt_message"
             android:inputType="textMultiLine"
             android:scrollbars="vertical"
             android:lines="6"
@@ -62,7 +67,7 @@
             android:text="Take Picture"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/button2" />
+            android:id="@+id/btn_train_image" />
 
     </android.support.design.widget.TextInputLayout>
 

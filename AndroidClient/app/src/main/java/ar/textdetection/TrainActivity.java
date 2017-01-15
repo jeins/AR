@@ -34,6 +34,7 @@ public class TrainActivity extends AppCompatActivity implements CameraBridgeView
 
     private CameraBridgeViewBase mOpenCvCameraView;
 
+    private String contentRequest;
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -65,14 +66,18 @@ public class TrainActivity extends AppCompatActivity implements CameraBridgeView
 
         mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.java_camera_view);
         mOpenCvCameraView.setCvCameraViewListener(this);
+
+        contentRequest = getIntent().getStringExtra("content");
+        Log.i(TAG, "contentReq: " + contentRequest);
     }
 
     private void trainImage(CvCameraViewFrame inputFrame) {
         Mat trainedImage = inputFrame.gray();
 
         File tmpImage = Utilities.saveImg(trainedImage);
+        Log.i(TAG, "uriReq: "+ "http://ar.mjuan.me/api/image/" + contentRequest);
         Ion.with(getApplicationContext())
-                .load("http://ar.mjuan.me/api/image/eyJsb2NhdGlvbiI6eyJsYXRpdHVkZSI6NTIuNDYzMDIyLCJsb25naXR1ZGUiOjEzLjUyNzE3Nn0sIm1lc3NhZ2UiOiJoZWxsbyB3b3JsZCB3b3JkbCB3b3JsZCB3b3JsZCJ9") //TODO:SHOULD BE CHANGE
+                .load("http://ar.mjuan.me/api/image/" + contentRequest)
                 .setMultipartFile("file", "image/jpeg", tmpImage)
                 .asJsonObject()
                 .setCallback(new FutureCallback<JsonObject>() {
