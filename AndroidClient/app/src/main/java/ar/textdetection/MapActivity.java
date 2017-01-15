@@ -27,18 +27,27 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Set;
 
 /**
  * Created by MJA on 12.01.2017.
  */
 
-public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, GoogleMap.OnMarkerClickListener {
     private static final String TAG = "TextDetection::MapActivity";
 
     private GoogleMap googleMap;
     private GoogleApiClient googleApiClient;
     private LocationRequest locationRequest;
     private Location location;
+
+    private HashMap<String, HashMap<String, String>> imgData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +108,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             return;
         }
         googleMap.setMyLocationEnabled(true);
+        googleMap.setOnMarkerClickListener(this);
 
         googleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
@@ -171,9 +181,24 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                     @Override
                     protected String doInBackground(Void... params) {
-                        RestClient.getNearestData(location.getLatitude(), location.getLongitude());
+                        imgData = RestClient.getNearestData(location.getLatitude(), location.getLongitude());
 
                         return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(String params) {
+                        ArrayList<LatLng> markersPosiiton = new ArrayList<LatLng>();
+
+                        Set<String> keys = imgData.keySet();
+                        for(String key : keys){
+                            HashMap<String, String> data = imgData.get(key);
+
+                            drawMarker(new LatLng(
+                                    Double.parseDouble(data.get("latitude")),
+                                    Double.parseDouble(data.get("longitude")))
+                            );
+                        }
                     }
                 }.execute();
             }
@@ -206,5 +231,41 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         distance = Math.pow(distance, 2);
 
         return Math.sqrt(distance);
+    }
+
+    private void drawMarker(LatLng position){
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(position);
+
+        googleMap.addMarker(markerOptions);
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        LatLng markerPosition = marker.getPosition();
+
+        Log.i(TAG, "markerClick!");
+
+        Set<String> keys = imgData.keySet();
+        for(String key : keys){
+            HashMap<String, String> data = imgData.get(key);
+            Double dLatitude = Double.parseDouble(data.get("latitude"));
+            Double dLongitude = Double.parseDouble(data.get("longitude"));
+
+            Log.i(TAG, "markerPosition: " + markerPosition.latitude + '_' + markerPosition.longitude);
+            Log.i(TAG, "dataPosition: " + dLatitude + '_' + dLongitude);
+
+            if(markerPosition.latitude == dLatitude && markerPosition.longitude == dLongitude)
+            {
+                Intent i = new Intent(getApplicationContext(),DetectorActivity.class);
+                i.putExtra("latitude", dLatitude);
+                i.putExtra("longitude", dLongitude);
+                i.putExtra("imageFile", data.get("imageFile"));
+
+                startActivity(i);
+            }
+        }
+
+        return false;
     }
 }

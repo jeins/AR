@@ -72,6 +72,8 @@ public class DetectorActivity extends AppCompatActivity implements CvCameraViewL
     HashMap<String, String> locationData;
 
     String imageName;
+    double latitude;
+    double longitude;
 
     private BaseLoaderCallback  mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -110,12 +112,16 @@ public class DetectorActivity extends AppCompatActivity implements CvCameraViewL
         mOpenCvCameraView.setCvCameraViewListener(this);
         textView = (TextView) findViewById(R.id.textView);
 
+        latitude = getIntent().getDoubleExtra("latitude", 0);
+        longitude = getIntent().getDoubleExtra("longitude", 0);
+        imageName = getIntent().getStringExtra("imageFile");
+
         new AsyncTask<Void, Void, String>(){
 
             @Override
             protected String doInBackground(Void... params) {
-                locationData = RestClient.getLocationData(52.456925, 13.526658); //TODO: SHOULD BE DYNAMIC!
-                imageName = locationData.get("name") + '.' + locationData.get("extension");
+                locationData = RestClient.getLocationData(latitude, longitude);//(52.456925, 13.526658); //TODO: SHOULD BE DYNAMIC!
+                //imageName = locationData.get("name") + '.' + locationData.get("extension");
                 return null;
             }
 
