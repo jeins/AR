@@ -55,6 +55,24 @@ router.post(imageApiPrefix + 'list', (req, res)=>{
 });
 
 /**
+ * get data from nearest location
+ * distance < 1 (mile = 1,6km)
+ */
+router.get(imageApiPrefix + 'nearest-from/:latitude/:longitude', (req, res)=>{
+    let latitude = req.params.latitude,
+        longitude = req.params.longitude;
+
+    models.sequelize
+        .query('SELECT *, ' +
+            'SQRT( POW(69.1 * (latitude - '+ latitude +'), 2) + POW(69.1 * ('+ longitude +' - longitude) * ' +
+            'COS(latitude / 57.3), 2)) AS distance ' +
+            'FROM images HAVING distance < 1 ORDER BY distance')
+        .spread((results, metadata) =>{
+            res.json(results);
+        });
+});
+
+/**
  * add image with image information
  * imgData must to base64 encrypted
  * imgData contains location & message
@@ -107,7 +125,5 @@ router.post(imageApiPrefix + ':imgdata', (req, res)=>{
         }
     });
 });
-
-
 
 module.exports = router;
