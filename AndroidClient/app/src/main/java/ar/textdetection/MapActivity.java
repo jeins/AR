@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -159,14 +160,51 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     @Override
-    public void onLocationChanged(Location location) {
+    public void onLocationChanged(final Location location) {
         if(location == null){
             Toast.makeText(this, "Cant get current location!", Toast.LENGTH_LONG).show();
         } else{
+
+            if(distance(location) > 200){
+                Log.i(TAG, "locationIsChange!!!");
+                new AsyncTask<Void, Void, String>(){
+
+                    @Override
+                    protected String doInBackground(Void... params) {
+                        RestClient.getNearestData(location.getLatitude(), location.getLongitude());
+
+                        return null;
+                    }
+                }.execute();
+            }
+
             this.location = location;
             LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());
             CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll, 15);
             googleMap.animateCamera(update);
         }
+    }
+
+    private double distance(Location newLocation) {
+        if(location == null){
+            return 1000;
+        }
+
+        final int R = 6371;
+
+        Log.i(TAG, "Coorlocation: " + location.getLatitude() + '-' + location.getLongitude());
+        Log.i(TAG, "CoorNewlocation: " + newLocation.getLatitude() + '-' + newLocation.getLongitude());
+
+        Double latDistance = Math.toRadians(newLocation.getLatitude() - location.getLatitude());
+        Double lonDistance = Math.toRadians(newLocation.getLongitude() - location.getLongitude());
+        Double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(location.getLatitude())) * Math.cos(Math.toRadians(newLocation.getLatitude()))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        Double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        double distance = R * c * 1000; // convert to meters
+        distance = Math.pow(distance, 2);
+
+        return Math.sqrt(distance);
     }
 }

@@ -2,11 +2,13 @@ package ar.textdetection;
 
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -91,14 +93,47 @@ public class RestClient {
         return null;
     }
 
-//    public static HashMap<String, ArrayList<String>> getNearestData(double latitude, double longitude)
-//    {
-//        OkHttpClient client = new OkHttpClient();
-//        HashMap<String, ArrayList<String>> results = new HashMap<>();
-//
-//        try{
-//            Request request = new Request.Builder()
-//                    .u
-//        }
-//    }
+    public static HashMap<String, HashMap<String, String>> getNearestData(double latitude, double longitude)
+    {
+        OkHttpClient client = new OkHttpClient();
+        HashMap<String, HashMap<String, String>> results = new HashMap<>();
+
+        try{
+            Request request = new Request.Builder()
+                    .url(url + "image/nearest-from/" + latitude + '/' + longitude)
+                    .build();
+
+            Log.i(TAG, "requestGetNearestData: " + url + "image/nearest-from/" + latitude + '/' + longitude);
+
+            Response response = client.newCall(request).execute();
+
+            JSONArray resArrObj = new JSONObject(response.body().string()).getJSONArray("data");
+
+            for(int i=0; i<resArrObj.length(); i++){
+                HashMap<String, String> content = new HashMap<>();
+                JSONObject resObj = resArrObj.getJSONObject(i);
+
+                String resLatitude = Double.toString(resObj.getDouble("latitude"));
+                String resLongitude = Double.toString(resObj.getDouble("longitude"));
+
+                content.put("imageFile", resObj.getString("name") + '.' + resObj.getString("extension"));
+                content.put("message", resObj.getString("message"));
+                content.put("latitude", resLatitude);
+                content.put("longitude", resLongitude);
+
+                results.put(resLatitude + ',' + resLongitude, content);
+            }
+
+            Log.i(TAG, "resultGetNearestData: " + results.toString());
+
+            return results;
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }
