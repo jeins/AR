@@ -30,7 +30,7 @@
         android:theme="@style/Theme.AppCompat.Light">
         <activity
             android:name=".MapActivity"
-            android:label="Text Detector"
+            android:label="Hiding Text"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -49,7 +49,7 @@
         </activity>
         <activity
             android:name=".TrainDataActivity"
-            android:label="Train Data Image"
+            android:label="Write a Message"
             android:screenOrientation="portrait"
             android:parentActivityName=".MapActivity">
             <meta-data
@@ -59,11 +59,11 @@
         <activity
             android:name=".TrainActivity"
             android:label="Train Image"
-            android:screenOrientation="landscape"
-            android:parentActivityName=".MapActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MapActivity" />
+            android:screenOrientation="landscape">
+            <!--android:parentActivityName=".MapActivity">-->
+            <!--<meta-data-->
+                <!--android:name="android.support.PARENT_ACTIVITY"-->
+                <!--android:value=".MapActivity" />-->
         </activity>
 
         <meta-data

@@ -2,6 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:id="@+id/train_action_train"
-        android:title="Take Picture"
+        android:title="Train Image"
+        android:showAsAction="always" />
+
+    <item android:id="@+id/action_map"
+        android:title="View Map"
         android:showAsAction="always" />
 </menu>

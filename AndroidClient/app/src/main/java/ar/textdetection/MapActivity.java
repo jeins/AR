@@ -132,8 +132,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             i.putExtra("longitude", location.getLongitude());
 
             startActivity(i);
-        } else if (item.getItemId() == R.id.map_action_scanning) {
-            startActivity(new Intent(getApplicationContext(), DetectorActivity.class));
         }
 
         return true;

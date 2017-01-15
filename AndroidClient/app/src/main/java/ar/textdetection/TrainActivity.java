@@ -67,7 +67,7 @@ public class TrainActivity extends AppCompatActivity implements CameraBridgeView
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_train);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.java_camera_view);
         mOpenCvCameraView.setCvCameraViewListener(this);
@@ -166,6 +166,8 @@ public class TrainActivity extends AppCompatActivity implements CameraBridgeView
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.train_action_train)
             _viewMode = TRAIN;
+        else if (item.getItemId() == R.id.action_map)
+            startActivity(new Intent(getApplicationContext(), MapActivity.class));
         else
             _viewMode = VIEW_MODE_RGBA;
 
