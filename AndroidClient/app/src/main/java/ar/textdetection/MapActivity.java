@@ -54,7 +54,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
 
         if (googleServicesAvailable()) {
-            Toast.makeText(this, "Alles Ok!", Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "Alles Ok!", Toast.LENGTH_LONG).show();
             setContentView(R.layout.activity_map);
             initMap();
         } else {
@@ -78,7 +78,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             dialog.show();
         } else {
             Toast.makeText(this, "Cant connect to play services", Toast.LENGTH_LONG).show();
-            ;
         }
 
         return false;

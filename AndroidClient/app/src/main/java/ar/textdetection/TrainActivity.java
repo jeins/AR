@@ -1,12 +1,17 @@
 package ar.textdetection;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
@@ -84,6 +89,23 @@ public class TrainActivity extends AppCompatActivity implements CameraBridgeView
                     @Override
                     public void onCompleted(Exception e, JsonObject result) {
                         Log.i(TAG, "result: " + result.toString());
+
+                        final Context context = getApplicationContext();
+                        Handler handler =  new Handler(context.getMainLooper());
+                        handler.post( new Runnable(){
+                            public void run(){
+                                final Toast toast = Toast.makeText(context, "Your Text is Safe!",Toast.LENGTH_LONG);
+                                toast.show();
+                                new CountDownTimer(1000, 1000){
+                                    public void onTick(long millisUntilFinished) {toast.show();}
+                                    public void onFinish() {
+                                        toast.cancel();
+
+                                        startActivity(new Intent(getApplicationContext(), MapActivity.class));
+                                    }
+                                }.start();
+                            }
+                        });
                     }
                 });
     }
