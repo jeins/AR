@@ -3,12 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="ar.textdetection.DetectorActivity">
 
-    <item android:id="@+id/map_action_train"
-        android:title="Take Picture"
-        android:showAsAction="always" />
-
     <item android:id="@+id/map_action_traindata"
-        android:title="Set Data"
+        android:title="Hide Text"
         android:showAsAction="always" />
 
     <item android:id="@+id/map_action_scanning"

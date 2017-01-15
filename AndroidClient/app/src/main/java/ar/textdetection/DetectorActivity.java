@@ -69,7 +69,6 @@ public class DetectorActivity extends AppCompatActivity implements CvCameraViewL
 
     int totalMatchesKeyPoints = 0;
 
-    RestClient restClient;
     HashMap<String, String> locationData;
 
     String imageName;
@@ -94,7 +93,6 @@ public class DetectorActivity extends AppCompatActivity implements CvCameraViewL
 
     public DetectorActivity() {
 //        Log.i(TAG, "Instantiated new " + this.getClass());
-        restClient = new RestClient();
     }
 
     /** Called when the activity is first created. */
@@ -116,7 +114,7 @@ public class DetectorActivity extends AppCompatActivity implements CvCameraViewL
 
             @Override
             protected String doInBackground(Void... params) {
-                locationData = restClient.getLocationData(52.456925, 13.526658); //TODO: SHOULD BE DYNAMIC!
+                locationData = RestClient.getLocationData(52.456925, 13.526658); //TODO: SHOULD BE DYNAMIC!
                 imageName = locationData.get("name") + '.' + locationData.get("extension");
                 return null;
             }

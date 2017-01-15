@@ -116,16 +116,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.map_action_train) {
-            startActivity(new Intent(getApplicationContext(), TrainActivity.class));
-        } else if (item.getItemId() == R.id.map_action_scanning) {
-            startActivity(new Intent(getApplicationContext(), DetectorActivity.class));
-        } else if (item.getItemId() == R.id.map_action_traindata) {
+        if (item.getItemId() == R.id.map_action_traindata) {
             Intent i = new Intent(getApplicationContext(), TrainDataActivity.class);
             i.putExtra("latitude", location.getLatitude());
             i.putExtra("longitude", location.getLongitude());
 
             startActivity(i);
+        } else if (item.getItemId() == R.id.map_action_scanning) {
+            startActivity(new Intent(getApplicationContext(), DetectorActivity.class));
         }
 
         return true;

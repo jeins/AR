@@ -6,8 +6,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -21,17 +23,11 @@ import okhttp3.Response;
 
 public class RestClient {
     private static final String  TAG = "TextDetection::REST_CLIENT";
-    private String url;
-    public String result = "";
+    private static final String url = "http://ar.mjuan.me/api/";
     public static final MediaType JSON
             = MediaType.parse("application/json; charset=utf-8");
 
-    public RestClient()
-    {
-        url = "http://ar.mjuan.me/api/";
-    }
-
-    public void getVersion()
+    public static String getVersion()
     {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
@@ -40,13 +36,15 @@ public class RestClient {
         try{
 
             Response response = client.newCall(request).execute();
-            result = response.body().string();
+            return response.body().string();
         } catch (IOException e){
             e.printStackTrace();
         }
+
+        return null;
     }
 
-    public HashMap<String, String> getLocationData(double latitude, double longitude)
+    public static HashMap<String, String> getLocationData(double latitude, double longitude)
     {
         OkHttpClient client = new OkHttpClient();
         HashMap<String, String> map = new HashMap<String, String>();
@@ -93,8 +91,14 @@ public class RestClient {
         return null;
     }
 
-    public String getResult()
-    {
-        return result;
-    }
+//    public static HashMap<String, ArrayList<String>> getNearestData(double latitude, double longitude)
+//    {
+//        OkHttpClient client = new OkHttpClient();
+//        HashMap<String, ArrayList<String>> results = new HashMap<>();
+//
+//        try{
+//            Request request = new Request.Builder()
+//                    .u
+//        }
+//    }
 }
