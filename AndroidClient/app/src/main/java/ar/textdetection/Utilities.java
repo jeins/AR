@@ -18,6 +18,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+/**
+ * Created by MJA on 01.12.2016.
+ */
+
 public class Utilities {
     private static final String  TAG                 = "TextDetection::Utilities";
     public static final int MEDIA_TYPE_IMAGE = 1;
@@ -114,13 +118,8 @@ public class Utilities {
         return mediaFile;
     }
     public static File getStorageDirectory() {
-        // To be safe, you should check that the SDCard is mounted
-        // using Environment.getExternalStorageState() before doing this.
-
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES), "TextDetectionApp");
-        // This location works best if you want the created images to be shared
-        // between applications and persist after your app has been uninstalled.
 
         // Create the storage directory if it does not exist
         if (! mediaStorageDir.exists()){

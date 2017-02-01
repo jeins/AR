@@ -29,18 +29,22 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+/**
+ * Created by MJA on 10.12.2016.
+ */
+
 public class DetectorActivity extends AppCompatActivity implements CvCameraViewListener2{
-    private static final String  TAG                 = "TextDetection::Activity";
+    private static final String  TAG = "TextDetection::Activity";
     String _toastMsg = "";
 
-    public static final int      VIEW_MODE_RGBA      = 0;
+    public static final int VIEW_MODE_RGBA = 0;
     public static final int SCANNING = 8;
     public static final int SHOW_MATCHES = 9;
     public static final int SHOW_BOX = 10;
     public static final int SHOW_KEYPOINTS = 11;
     public static final int MIN_MATCHES_KEYPOINTS = 80;
 
-    private MenuItem             mItemPreviewRGBA;
+    private MenuItem mItemPreviewRGBA;
     private CameraBridgeViewBase mOpenCvCameraView;
 
     public static int _viewMode = VIEW_MODE_RGBA;
@@ -56,8 +60,6 @@ public class DetectorActivity extends AppCompatActivity implements CvCameraViewL
 
     Mat _descriptors2;
     MatOfKeyPoint _keypoints2;
-
-    // GUI Controls
     Mat _img1;
     String _numMatches;
     int _minDistance;
