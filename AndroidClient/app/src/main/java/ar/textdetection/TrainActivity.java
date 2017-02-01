@@ -94,7 +94,7 @@ public class TrainActivity extends AppCompatActivity implements CameraBridgeView
                         Handler handler =  new Handler(context.getMainLooper());
                         handler.post( new Runnable(){
                             public void run(){
-                                final Toast toast = Toast.makeText(context, "Your Text is Safe!",Toast.LENGTH_LONG);
+                                final Toast toast = Toast.makeText(context, "your text is safe now!",Toast.LENGTH_LONG);
                                 toast.show();
                                 new CountDownTimer(1000, 1000){
                                     public void onTick(long millisUntilFinished) {toast.show();}

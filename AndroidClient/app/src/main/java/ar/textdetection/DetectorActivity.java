@@ -38,7 +38,7 @@ public class DetectorActivity extends AppCompatActivity implements CvCameraViewL
     public static final int SHOW_MATCHES = 9;
     public static final int SHOW_BOX = 10;
     public static final int SHOW_KEYPOINTS = 11;
-    public static final int MIN_MATCHES_KEYPOINTS = 120;
+    public static final int MIN_MATCHES_KEYPOINTS = 80;
 
     private MenuItem             mItemPreviewRGBA;
     private CameraBridgeViewBase mOpenCvCameraView;

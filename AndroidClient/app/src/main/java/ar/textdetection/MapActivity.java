@@ -172,7 +172,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             Toast.makeText(this, "Cant get current location!", Toast.LENGTH_LONG).show();
         } else{
 
-            if(distance(location) > 200){
+            if(distance(location.getLatitude(), location.getLongitude()) > 200){
                 Log.i(TAG, "locationIsChange!!!");
                 new AsyncTask<Void, Void, String>(){
 
@@ -207,7 +207,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
-    private double distance(Location newLocation) {
+    private double distance(double newLatitude, double newLongitude) {
         if(location == null){
             return 1000;
         }
@@ -215,12 +215,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         final int R = 6371;
 
         Log.i(TAG, "Coorlocation: " + location.getLatitude() + '-' + location.getLongitude());
-        Log.i(TAG, "CoorNewlocation: " + newLocation.getLatitude() + '-' + newLocation.getLongitude());
+        Log.i(TAG, "CoorNewlocation: " + newLatitude + '-' + newLongitude);
 
-        Double latDistance = Math.toRadians(newLocation.getLatitude() - location.getLatitude());
-        Double lonDistance = Math.toRadians(newLocation.getLongitude() - location.getLongitude());
+        Double latDistance = Math.toRadians(newLatitude - location.getLatitude());
+        Double lonDistance = Math.toRadians(newLongitude - location.getLongitude());
         Double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
-                + Math.cos(Math.toRadians(location.getLatitude())) * Math.cos(Math.toRadians(newLocation.getLatitude()))
+                + Math.cos(Math.toRadians(location.getLatitude())) * Math.cos(Math.toRadians(newLatitude))
                 * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
         Double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
@@ -254,12 +254,17 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             if(markerPosition.latitude == dLatitude && markerPosition.longitude == dLongitude)
             {
-                Intent i = new Intent(getApplicationContext(),DetectorActivity.class);
-                i.putExtra("latitude", dLatitude);
-                i.putExtra("longitude", dLongitude);
-                i.putExtra("imageFile", data.get("imageFile"));
+                if(distance(dLatitude, dLongitude) > 10){
+                    Toast.makeText(getApplicationContext(), "you're too far away from the object!", Toast.LENGTH_LONG).show();
+                }
+                else{
+                    Intent i = new Intent(getApplicationContext(),DetectorActivity.class);
+                    i.putExtra("latitude", dLatitude);
+                    i.putExtra("longitude", dLongitude);
+                    i.putExtra("imageFile", data.get("imageFile"));
 
-                startActivity(i);
+                    startActivity(i);
+                }
             }
         }
 
